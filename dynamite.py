@@ -1,9 +1,70 @@
 import os
 import sys
 import pygame
-from PyQt5.QtWidgets import QApplication, QLabel, QVBoxLayout, QWidget, QMenu
+from PyQt5.QtWidgets import QApplication, QLabel, QVBoxLayout, QWidget, QMenu, QDialog, QVBoxLayout, QHBoxLayout, QPushButton, QLineEdit, QLabel, QSpacerItem, QSizePolicy
 from PyQt5.QtCore import Qt, QTimer, QPoint
 from PyQt5.QtGui import QPixmap, QFont
+
+
+class CustomTimeDialog(QDialog):
+    """Dialog for entering custom countdown time."""
+
+    def __init__(self, parent=None):
+        super().__init__(parent)
+
+        self.setWindowTitle("Set Custom Time")
+        self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)  # Remove the question mark icon
+        self.setFixedSize(300, 220)  # Increased size slightly to account for padding
+
+        # Layout for the custom time input
+        layout = QVBoxLayout()
+
+        # Hours input
+        self.hours_input = QLineEdit(self)
+        self.hours_input.setPlaceholderText("Hours")
+        self.hours_input.setFixedHeight(30)  # Increased height
+        layout.addWidget(QLabel("Hours:"))
+        layout.addWidget(self.hours_input)
+
+        # Minutes input
+        self.minutes_input = QLineEdit(self)
+        self.minutes_input.setPlaceholderText("Minutes")
+        self.minutes_input.setFixedHeight(30)  # Increased height
+        layout.addWidget(QLabel("Minutes:"))
+        layout.addWidget(self.minutes_input)
+
+        # Seconds input
+        self.seconds_input = QLineEdit(self)
+        self.seconds_input.setPlaceholderText("Seconds")
+        self.seconds_input.setFixedHeight(30)  # Increased height
+        layout.addWidget(QLabel("Seconds:"))
+        layout.addWidget(self.seconds_input)
+
+        # Spacer to add padding at the bottom
+        layout.addSpacerItem(QSpacerItem(20, 20, QSizePolicy.Minimum, QSizePolicy.Expanding))
+
+        # Set & Start Button
+        button_layout = QHBoxLayout()
+        set_start_button = QPushButton("Set & Start", self)
+        set_start_button.setFixedHeight(40)  # Increased button height
+        set_start_button.clicked.connect(self.set_and_start)
+        button_layout.addWidget(set_start_button)
+        layout.addLayout(button_layout)
+
+        self.setLayout(layout)
+        self.selected_time = None
+
+    def set_and_start(self):
+        """Gather user input and close the dialog with custom time."""
+        try:
+            hours = int(self.hours_input.text()) if self.hours_input.text() else 0
+            minutes = int(self.minutes_input.text()) if self.minutes_input.text() else 0
+            seconds = int(self.seconds_input.text()) if self.seconds_input.text() else 0
+            self.selected_time = hours * 3600 + minutes * 60 + seconds
+        except ValueError:
+            # If invalid input, reset to None
+            self.selected_time = None
+        self.accept()  # Close the dialog
 
 
 class CountdownWidget(QWidget):
@@ -147,6 +208,9 @@ class CountdownWidget(QWidget):
         set_1_minute = context_menu.addAction("Set to 1 Minute")
         set_30_seconds = context_menu.addAction("Set to 30 Seconds")
 
+        # Custom time option
+        custom_time_action = context_menu.addAction("Set Custom Time")
+
         quit_action = context_menu.addAction("Quit")
 
         action = context_menu.exec_(self.mapToGlobal(event.pos()))
@@ -175,6 +239,8 @@ class CountdownWidget(QWidget):
             self.set_timer(60)
         elif action == set_30_seconds:
             self.set_timer(30)
+        elif action == custom_time_action:
+            self.set_custom_time()
         elif action == quit_action:
             self.close()
 
@@ -197,6 +263,12 @@ class CountdownWidget(QWidget):
         """Set the timer to a specific amount of seconds."""
         self.reset_time = seconds
         self.reset_timer()
+
+    def set_custom_time(self):
+        """Open a dialog to set a custom time."""
+        dialog = CustomTimeDialog(self)
+        if dialog.exec_() == QDialog.Accepted and dialog.selected_time is not None:
+            self.set_timer(dialog.selected_time)
 
     def stop_blinking(self):
         """Stop blinking and reset the label's visibility."""
