@@ -45,7 +45,7 @@ class CustomTimeDialog(QDialog):
 
         # Set & Start Button
         button_layout = QHBoxLayout()
-        set_start_button = QPushButton("Set & Start", self)
+        set_start_button = QPushButton("Set and Start", self)
         set_start_button.setFixedHeight(40)  # Increased button height
         set_start_button.clicked.connect(self.set_and_start)
         button_layout.addWidget(set_start_button)
