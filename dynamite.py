@@ -45,7 +45,7 @@ class CustomTimeDialog(QDialog):
 
         # Set & Start Button
         button_layout = QHBoxLayout()
-        set_start_button = QPushButton("Set and Start", self)
+        set_start_button = QPushButton("Start", self)
         set_start_button.setFixedHeight(40)  # Increased button height
         set_start_button.clicked.connect(self.set_and_start)
         button_layout.addWidget(set_start_button)
@@ -198,15 +198,15 @@ class CountdownWidget(QWidget):
         pause_action = context_menu.addAction("Resume" if self.is_paused else "Pause")
 
         # Add time setting options
-        set_8_hours = context_menu.addAction("Set to 8 Hours")
-        set_4_hours = context_menu.addAction("Set to 4 Hours")
         set_1_hour = context_menu.addAction("Set to 1 Hour")
         set_30_minutes = context_menu.addAction("Set to 30 Minutes")
         set_15_minutes = context_menu.addAction("Set to 15 Minutes")
         set_10_minutes = context_menu.addAction("Set to 10 Minutes")
         set_5_minutes = context_menu.addAction("Set to 5 Minutes")
+        set_2_minutes = context_menu.addAction("Set to 2 Minutes")
         set_1_minute = context_menu.addAction("Set to 1 Minute")
         set_30_seconds = context_menu.addAction("Set to 30 Seconds")
+        set_10_seconds = context_menu.addAction("Set to 10 Seconds")
 
         # Custom time option
         custom_time_action = context_menu.addAction("Set Custom Time")
@@ -221,10 +221,6 @@ class CountdownWidget(QWidget):
             self.reset_timer()
         elif action == pause_action:
             self.toggle_pause()
-        elif action == set_8_hours:
-            self.set_timer(8 * 3600)
-        elif action == set_4_hours:
-            self.set_timer(4 * 3600)
         elif action == set_1_hour:
             self.set_timer(3600)
         elif action == set_30_minutes:
@@ -235,10 +231,14 @@ class CountdownWidget(QWidget):
             self.set_timer(10 * 60)
         elif action == set_5_minutes:
             self.set_timer(5 * 60)
+        elif action == set_2_minutes:
+            self.set_timer(2 * 60)
         elif action == set_1_minute:
             self.set_timer(60)
         elif action == set_30_seconds:
             self.set_timer(30)
+        elif action == set_10_seconds:
+            self.set_timer(10)
         elif action == custom_time_action:
             self.set_custom_time()
         elif action == quit_action:
